@@ -1,0 +1,9 @@
+TASK com.example.positionassistant id=29
+  ACTIVITY com.example.positionassistant/.MainActivity 416a55a0 pid=21004
+    Local Activity 41690b60 State:
+      mResumed=true mStopped=false mFinished=false
+      mLoadersStarted=true
+      mChangingConfigurations=false
+      mCurrentConfig={1.0 0mcc0mnc en_US layoutdir=0 sw360dp w360dp h567dp nrml port finger -keyb/v/h -nav/h s.6}
+    FragmentManager misc state:
+      mCurState=5 mStateSaved=false mDestroyed=false
