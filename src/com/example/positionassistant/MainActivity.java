@@ -60,7 +60,7 @@ public class MainActivity extends Activity implements RecBufListener {
     private static final String DTAG = "XW_Tag";
     public static final String SDPATH = Environment.getExternalStorageDirectory().getPath();
     private static final int SAMPLE_RATE = 48000;
-    private static final int DETECTION_MARGIN = 100050000;
+    private static final int DETECTION_MARGIN = 10000;
     private static boolean Has_Detected = false;
     private static int cnt = 0;
     private long startTime;
@@ -80,7 +80,8 @@ public class MainActivity extends Activity implements RecBufListener {
     //变量初始化
     private String counts;
     int[] intData;
-    LinkedBlockingQueue<int[]> queue;
+    short[] shortData;
+    LinkedBlockingQueue<short[]> queue;
 
 
     //控件初始化
@@ -146,7 +147,7 @@ public class MainActivity extends Activity implements RecBufListener {
         this.mSPUtil = new SPUtil(SAMPLE_RATE, BUFSIZE / 4);
 
         /********************存储获取的原始音频数据给处理线程*********************/
-        queue = new LinkedBlockingQueue<int[]>();
+        queue = new LinkedBlockingQueue<short[]>();
 
         /**************************recording thread******************************/
         mBuffer = new RecBuffer();
@@ -204,9 +205,9 @@ public class MainActivity extends Activity implements RecBufListener {
                 recordingThread = new Thread(mBuffer);
                 recordingThread.start();
 
-//                //开启处理线程
-//                processThread = new Thread(mProcess);
-//                processThread.start();
+                //开启处理线程
+                processThread = new Thread(mProcess);
+                processThread.start();
 
                 Log.d(DTAG, "开始录音");
                 Toast.makeText(MainActivity.this, "开始测量", Toast.LENGTH_SHORT).show();
@@ -233,12 +234,12 @@ public class MainActivity extends Activity implements RecBufListener {
                 }
 
                 //关闭processing thread
-//                Log.d(DTAG, "processingThread status:" + processThread.isAlive());
-//                mProcess.stopFlag = true;
-//                SystemClock.sleep(1000);
-//                Log.d(DTAG, "processingThread status:" + processThread.isAlive());
-//                processThread.interrupt();
-//                processThread = null;
+                Log.d(DTAG, "processingThread status:" + processThread.isAlive());
+                mProcess.stopFlag = true;
+                SystemClock.sleep(1000);
+                Log.d(DTAG, "processingThread status:" + processThread.isAlive());
+                processThread.interrupt();
+                processThread = null;
 
                 //关闭recoeding Thread
                 Log.d(DTAG, "recordingThread status:" + recordingThread.isAlive());
@@ -316,15 +317,20 @@ public class MainActivity extends Activity implements RecBufListener {
 
         if (cnt > 2) //去掉前面的调试信息
         {
-            //byte[] -> int[]
-            intData = new int[BUFSIZE / 4];
+//            //byte[] -> int[]
+//            intData = new int[BUFSIZE / 4];
+//            ByteBuffer.wrap(data).order(ByteOrder.LITTLE_ENDIAN)
+//                    .asIntBuffer().get(intData);
+            //byte[] -> short[]
+            shortData = new short[BUFSIZE / 2];
             ByteBuffer.wrap(data).order(ByteOrder.LITTLE_ENDIAN)
-                    .asIntBuffer().get(intData);
-//            mAudioBuffer.SeperateTwoChannels(intData); //分声道存储到recBufferTest.txt中
+                    .asShortBuffer().get(shortData);
+
+            mAudioBuffer.SeperateTwoChannels(shortData); //分声道存储到recBufferTest.txt中
             //返回值为short型
 
             /***************initial two channel***************/
-			for (int value:intData)
+			for (int value:shortData)
 			{
 				if (value > DETECTION_MARGIN){
 					Has_Detected = true;
@@ -341,16 +347,16 @@ public class MainActivity extends Activity implements RecBufListener {
 
                 try {
                     //实时绘图 单个麦克风 验证数据转换格式的正确性
-                    Log.d("vivien","onUpdate");
+                   /* Log.d("vivien","onUpdate");
                     for (int i=0;i<intData.length;i=i+2) {
                         addEntry(mChart,intData[i]);
                         Message msg = new Message();
                         msg.what = UPDATE_UI;
                         handler.sendMessage(msg);
-                    }
+                    } */
 
                     //放到该阻塞队列中
-//                    queue.put(intData);
+                    queue.put(shortData);
                     Has_Detected = false;
                 } catch (Exception e) {
                     e.printStackTrace();

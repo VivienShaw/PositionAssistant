@@ -45,35 +45,35 @@ public class AudioBuffer {
      * TwoChannels
      * save raw file
      */
-	public short[] SeperateTwoChannels(int[] data){//data的长度为2048
-		byte[] twoWay;
-		byte[] mic1 = new byte[2];
-		byte[] mic2 = new byte[2];
-
-		int i;
-		int j;
-		int n=0;
-		for (i =0 ; i<data.length;i++){
-			twoWay = intToByteArray(data[i]);
-			for (j=0;j<2;j++)
-			{
-				mic1[j] = twoWay[j];
-			}
-			for (j=0;j<2;j++)
-			{
-				mic2[j] = twoWay[j+2];
-			}
-			TwoChannels[n]=ByteArrayToShort(mic1);
-			TwoChannels[n+1]=ByteArrayToShort(mic2);
-			n=n+2;
-		}
+	public short[] SeperateTwoChannels(short[] data){//data的长度为2048
+//		byte[] twoWay;
+//		byte[] mic1 = new byte[2];
+//		byte[] mic2 = new byte[2];
+//
+//		int i;
+//		int j;
+//		int n=0;
+//		for (i =0 ; i<data.length;i++){
+//			twoWay = intToByteArray(data[i]);
+//			for (j=0;j<2;j++)
+//			{
+//				mic1[j] = twoWay[j];
+//			}
+//			for (j=0;j<2;j++)
+//			{
+//				mic2[j] = twoWay[j+2];
+//			}
+//			TwoChannels[n]=ByteArrayToShort(mic1);
+//			TwoChannels[n+1]=ByteArrayToShort(mic2);
+//			n=n+2;
+//		}
 
 		/*******************smooth the data******************/
 //		SPUtil.smooth(TwoChannels);
 
   /*****************save orignal data in file******************/
 		try{
-			for (short value:TwoChannels)
+			for (short value:data)
 				out.write(value+"\n");
 
 //			for (short value:TwoChannels) {

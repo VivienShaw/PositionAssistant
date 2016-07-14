@@ -43,10 +43,10 @@ public class AudioProcess implements Runnable {
     private FileWriter fWriter;
     private BufferedWriter bWriter;
 
-    LinkedBlockingQueue<int[]> queue = new LinkedBlockingQueue<int[]>();
+    LinkedBlockingQueue<short[]> queue = new LinkedBlockingQueue<short[]>();
     Filter filter;
 
-    public AudioProcess(LinkedBlockingQueue<int[]> queue) {
+    public AudioProcess(LinkedBlockingQueue<short[]> queue) {
         this.queue = queue;
         try {
             //存储滤波后的数据
@@ -61,7 +61,7 @@ public class AudioProcess implements Runnable {
     /**
      * audio processing. extract features from audio. Add features to KNN.
      */
-    public void runAudioProcessing(int[] rawData) {
+    public void runAudioProcessing(short[] rawData) {
 
         isFinished = false;
 
@@ -71,8 +71,8 @@ public class AudioProcess implements Runnable {
         long startFunction = System.currentTimeMillis();//获取当前时间
 
         /***************seperate two channels***************/
-        int[] LeftChannel = new int[BUFSIZE / 8];//数据大小：256
-        int[] RightChannel = new int[BUFSIZE / 8];//分开后的双声道
+        short[] LeftChannel = new short[BUFSIZE / 4];//数据大小：256
+        short[] RightChannel = new short[BUFSIZE / 4];//分开后的双声道
         int i=0;
         for (int j = 0; j < rawData.length; j = j + 2) {
             LeftChannel[i] = rawData[j];//2048
@@ -85,11 +85,11 @@ public class AudioProcess implements Runnable {
         /*********************fft High Filter**************************/
         for (i = 0; i < LeftChannel.length; i++) {
             filter.Update(LeftChannel[i]);
-            LeftChannel[i] = (int)filter.getValue();
+            LeftChannel[i] = (short) filter.getValue();
         }
         for (i = 0; i < RightChannel.length; i++) {
             filter.Update(RightChannel[i]);
-            RightChannel[i] = (int)filter.getValue();
+            RightChannel[i] = (short) filter.getValue();
         }
 
 //        BandPass bandPass = new BandPass();
