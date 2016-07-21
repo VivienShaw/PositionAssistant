@@ -60,7 +60,7 @@ public class MainActivity extends Activity implements RecBufListener {
     private static final String DTAG = "XW_Tag";
     public static final String SDPATH = Environment.getExternalStorageDirectory().getPath();
     private static final int SAMPLE_RATE = 48000;
-    private static final int DETECTION_MARGIN = 10000;
+    private static final int DETECTION_MARGIN = 3000;
     private static boolean Has_Detected = false;
     private static int cnt = 0;
     private long startTime;
@@ -134,14 +134,7 @@ public class MainActivity extends Activity implements RecBufListener {
 
 
         /****************audio buffer to store key strokes*****************/
-        try {
             this.mAudioBuffer = new AudioBuffer(BUFSIZE, SDPATH);
-        } catch (FileNotFoundException e) {
-            Log.d(DTAG,"recBufferTest.txt没有创建成功");
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
         /****************SPU tool and function*****************/
         this.mSPUtil = new SPUtil(SAMPLE_RATE, BUFSIZE / 4);
@@ -208,6 +201,9 @@ public class MainActivity extends Activity implements RecBufListener {
                 //开启处理线程
                 processThread = new Thread(mProcess);
                 processThread.start();
+
+                mAudioBuffer.openResource();
+                mProcess.openResource();
 
                 Log.d(DTAG, "开始录音");
                 Toast.makeText(MainActivity.this, "开始测量", Toast.LENGTH_SHORT).show();
@@ -321,16 +317,17 @@ public class MainActivity extends Activity implements RecBufListener {
 //            intData = new int[BUFSIZE / 4];
 //            ByteBuffer.wrap(data).order(ByteOrder.LITTLE_ENDIAN)
 //                    .asIntBuffer().get(intData);
+
             //byte[] -> short[]
             shortData = new short[BUFSIZE / 2];
             ByteBuffer.wrap(data).order(ByteOrder.LITTLE_ENDIAN)
                     .asShortBuffer().get(shortData);
 
-            mAudioBuffer.SeperateTwoChannels(shortData); //分声道存储到recBufferTest.txt中
+//            mAudioBuffer.SeperateTwoChannels(shortData); //分声道存储到recBufferTest.txt中
             //返回值为short型
 
             /***************initial two channel***************/
-			for (int value:shortData)
+			for (short value:shortData)
 			{
 				if (value > DETECTION_MARGIN){
 					Has_Detected = true;
@@ -343,17 +340,17 @@ public class MainActivity extends Activity implements RecBufListener {
             /******************run audio process*******************/
 			if (Has_Detected)
 			{
-//                mAudioBuffer.SeperateTwoChannels(intData); //分声道存储到recBufferTest.txt中
+                mAudioBuffer.SeperateTwoChannels(shortData); //分声道存储到recBufferTest.txt中
 
                 try {
                     //实时绘图 单个麦克风 验证数据转换格式的正确性
-                   /* Log.d("vivien","onUpdate");
-                    for (int i=0;i<intData.length;i=i+2) {
-                        addEntry(mChart,intData[i]);
+                    Log.d("vivien","onUpdate");
+                    /*for (int i=0;i<shortData.length;i=i+2) {
+                        addEntry(mChart,shortData[i]);
                         Message msg = new Message();
                         msg.what = UPDATE_UI;
                         handler.sendMessage(msg);
-                    } */
+                    }*/
 
                     //放到该阻塞队列中
                     queue.put(shortData);
@@ -471,6 +468,8 @@ public class MainActivity extends Activity implements RecBufListener {
 
 
 /***************************以下可不看***********************************/
+
+
     public void onStartButton(View view) {
         //在外部设备创建一个文件夹用于存放中间处理数据，取名：MyAppLog
 //			String path = SDPATH + "/" + "MyAppLog";

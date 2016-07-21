@@ -34,9 +34,9 @@ public class AudioProcess implements Runnable {
 
     public static final String SDPATH = MainActivity.SDPATH;
     private int BUFSIZE = MainActivity.BUFSIZE;
-    private static final int FreqCutOff = 4000;
+    private static final int FreqCutOff = 1500;
     private static final double GCCThreshold = 4 * 10 ^ 6;
-    private static final int SAMPLE_RATE = 48000;
+    private static final int SAMPLE_RATE = 24000;
     public boolean stopFlag = false;
     public boolean isFinished = false;
 
@@ -55,7 +55,7 @@ public class AudioProcess implements Runnable {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        filter = new Filter(FreqCutOff, SAMPLE_RATE, Filter.PassType.Highpass, 1);
+        filter = new Filter(FreqCutOff, SAMPLE_RATE, Filter.PassType.Lowpass, 1);
     }
 
     /**
@@ -268,6 +268,16 @@ public class AudioProcess implements Runnable {
                 runAudioProcessing(queue.take());
             }
         } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void openResource() {
+        try {
+            //存储滤波后的数据
+            fWriter = new FileWriter(SDPATH+"/MyAppLog/filtedSignal.txt",true);
+            bWriter = new BufferedWriter(fWriter);
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }

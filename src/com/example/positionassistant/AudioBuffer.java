@@ -28,14 +28,18 @@ public class AudioBuffer {
 	BufferedWriter out;
 
 
-	public AudioBuffer(int buffersize,String sdCard) throws IOException {
+	public AudioBuffer(int buffersize,String sdCard) {
 		this.size = buffersize;
 		this.sdcard = sdCard;
 		TwoChannels = new short[size/2];
 		double_Raw = new double[size/2];
 //		fos = new FileOutputStream(sdcard+"/MyAppLog/recBufferTest.txt",true);
 //		dos = new DataOutputStream(fos);
-		fstream = new FileWriter(sdcard+"/MyAppLog/recBufferTest.txt",true);
+		try {
+			fstream = new FileWriter(sdcard+"/MyAppLog/recBufferTest.txt",true);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		out = new BufferedWriter(fstream);
 	}
 
@@ -122,6 +126,15 @@ public class AudioBuffer {
 			double_Raw[row]=(double)data[row];
 		}
 		return double_Raw;
+	}
+
+	public void openResource() {
+		try {
+			fstream = new FileWriter(sdcard+"/MyAppLog/recBufferTest.txt",true);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		out = new BufferedWriter(fstream);
 	}
 
 	// Close the output stream
