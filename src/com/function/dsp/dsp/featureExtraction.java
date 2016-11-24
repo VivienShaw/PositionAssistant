@@ -42,7 +42,7 @@ Contact information:
 Please visit http://ocvolume.sourceforge.net.
 */
 
-package com.function.dsp;
+package com.function.dsp.dsp;
 
 /**
  * last updated on June 15, 2002<br>

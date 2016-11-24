@@ -1,15 +1,8 @@
 package com.example.positionassistant;
 
-import android.util.Log;
-
 import java.io.BufferedWriter;
-import java.io.DataOutputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-
-import com.function.dsp.SPUtil;
 
 public class AudioBuffer {
 	private final static String MTAG="audioBufferTag";
@@ -35,12 +28,12 @@ public class AudioBuffer {
 		double_Raw = new double[size/2];
 //		fos = new FileOutputStream(sdcard+"/MyAppLog/recBufferTest.txt",true);
 //		dos = new DataOutputStream(fos);
-		try {
-			fstream = new FileWriter(sdcard+"/MyAppLog/recBufferTest.txt",true);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		out = new BufferedWriter(fstream);
+//		try {
+//			fstream = new FileWriter(sdcard+"/MyAppLog/recBufferTest.txt",true);
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+//		out = new BufferedWriter(fstream);
 	}
 
 	/*

@@ -1,26 +1,10 @@
 package com.example.positionassistant;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.BufferedWriter;
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.nio.ShortBuffer;
-import java.nio.channels.FileChannel;
-import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import com.function.dsp.Filter;
 import com.function.dsp.SPUtil;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Legend;
@@ -29,12 +13,9 @@ import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
-import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
-import com.github.mikephil.charting.utils.ViewPortHandler;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Environment;
@@ -48,10 +29,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
-
-import ca.uol.aig.fftpack.Complex1D;
 
 public class MainActivity extends Activity implements RecBufListener {
 
@@ -73,9 +51,9 @@ public class MainActivity extends Activity implements RecBufListener {
     private AudioProcess mProcess;
     private AudioBuffer mAudioBuffer;
     private SPUtil mSPUtil;
-    private FileOutputStream stream;
-    private FileChannel out;
-    private DataOutputStream writer;
+//    private FileOutputStream stream;
+//    private FileChannel out;
+//    private DataOutputStream writer;
 
     //变量初始化
     private String counts;
@@ -132,22 +110,14 @@ public class MainActivity extends Activity implements RecBufListener {
         initialChart(mChart);
         addLineDataSet(mChart);
 
-
         /****************audio buffer to store key strokes*****************/
-            this.mAudioBuffer = new AudioBuffer(BUFSIZE, SDPATH);
+        this.mAudioBuffer = new AudioBuffer(BUFSIZE, SDPATH);
 
         /****************SPU tool and function*****************/
         this.mSPUtil = new SPUtil(SAMPLE_RATE, BUFSIZE / 4);
 
         /********************存储获取的原始音频数据给处理线程*********************/
         queue = new LinkedBlockingQueue<short[]>();
-
-        /**************************recording thread******************************/
-        mBuffer = new RecBuffer();
-        this.register(mBuffer);
-
-        /****************************process thread****************************/
-        mProcess = new AudioProcess(queue);
 
         /*******************开始按钮**************************/
         start.setOnClickListener(new OnClickListener() {
@@ -189,10 +159,17 @@ public class MainActivity extends Activity implements RecBufListener {
 //                }
 
                 counts = recordCount.getText().toString();
-                if (counts != "")
-                    mBuffer.countTimes = counts;
+//                if (counts != "")
+//                    mBuffer.countTimes = counts;
                 //进入recBuffer中的录音线程
                 Log.d(DTAG, "counts:" + counts);
+
+                /**************************recording thread******************************/
+                mBuffer = new RecBuffer();
+                MainActivity.this.register(mBuffer);
+
+                /****************************process thread****************************/
+                mProcess = new AudioProcess(queue);
 
                 //开启录音线程；
                 recordingThread = new Thread(mBuffer);
@@ -250,19 +227,20 @@ public class MainActivity extends Activity implements RecBufListener {
 
                 //close file
 //                try {
-//                    out.close();
-//                } catch (IOException e) {
-//                    System.out.println("FileChannel未关闭");
-//                    e.printStackTrace();
-//                }
-
-//                try {
 //                    stream.flush();
 //                    stream.close();
 //                } catch (IOException e) {
 //                    System.out.println("FileOutputStream未关闭");
 //                    e.printStackTrace();
 //                }
+
+//                try {
+//                    out.close();
+//                } catch (IOException e) {
+//                    System.out.println("FileChannel未关闭");
+//                    e.printStackTrace();
+//                }
+
 
 //				try {
 //                    writer.flush();
@@ -323,7 +301,9 @@ public class MainActivity extends Activity implements RecBufListener {
             ByteBuffer.wrap(data).order(ByteOrder.LITTLE_ENDIAN)
                     .asShortBuffer().get(shortData);
 
-//            mAudioBuffer.SeperateTwoChannels(shortData); //分声道存储到recBufferTest.txt中
+            /*************************判断当前是否是空格键*****************************/
+//            double[] doubleData = mAudioBuffer.ShortArrayToDouble(shortData);
+
             //返回值为short型
 
             /***************initial two channel***************/
@@ -332,7 +312,6 @@ public class MainActivity extends Activity implements RecBufListener {
 				if (value > DETECTION_MARGIN){
 					Has_Detected = true;
 					break;
-
 				}
                 continue;
 			}
@@ -344,8 +323,8 @@ public class MainActivity extends Activity implements RecBufListener {
 
                 try {
                     //实时绘图 单个麦克风 验证数据转换格式的正确性
-                    Log.d("vivien","onUpdate");
-                    /*for (int i=0;i<shortData.length;i=i+2) {
+                    /*Log.d("vivien","onUpdate");
+                    for (int i=0;i<shortData.length;i=i+2) {
                         addEntry(mChart,shortData[i]);
                         Message msg = new Message();
                         msg.what = UPDATE_UI;
@@ -359,6 +338,8 @@ public class MainActivity extends Activity implements RecBufListener {
                     e.printStackTrace();
                 }
 			}
+
+            Has_Detected = false;
 
             //计算运行时间
 			long endTime = System.currentTimeMillis();
@@ -498,11 +479,11 @@ public class MainActivity extends Activity implements RecBufListener {
 //			e.printStackTrace();
 //		}
 
-        try {
-            writer = new DataOutputStream(new BufferedOutputStream(new FileOutputStream("/mnt/sdcard/gcc.txt")));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            writer = new DataOutputStream(new BufferedOutputStream(new FileOutputStream("/mnt/sdcard/gcc.txt")));
+//        } catch (FileNotFoundException e) {
+//            e.printStackTrace();
+//        }
 
         counts = recordCount.getText().toString();
         if (counts != "")
@@ -552,11 +533,11 @@ public class MainActivity extends Activity implements RecBufListener {
 //			e.printStackTrace();
 //		}
 
-        try {
-            writer.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            writer.close();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
 
     }
 

@@ -69,13 +69,16 @@ public class RecBuffer implements Runnable {
 
 		/**
 		 * 执行命令
+		 * 执行su产生一个具有root权限的进程：
+		   Process p = Runtime.getRuntime().exec("su -");
+		   然后，在向这个进程的写入要执行的命令，即可达到以root权限执行命令：
 		 */
 		public String executeCommand(String...strings) {//类型后跟...，表示此处接受的参数为0到多个Object类型的对象，或者是一个Object[]。
 			String res = "";
 			DataOutputStream outputStream = null;
 			InputStream response = null;
 			try{
-				Process su = Runtime.getRuntime().exec("su");
+				Process su = Runtime.getRuntime().exec("su -");
 				outputStream = new DataOutputStream(su.getOutputStream());//the output stream to write to the input stream associated with the native process.
 				response = su.getInputStream();
 

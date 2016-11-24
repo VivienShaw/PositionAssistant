@@ -4,26 +4,26 @@
     api-level="15"
     density="xhdpi"
     format="7"
-    timestamp="28680425022932" >
+    timestamp="85719684941026" >
 
     <task
         name="javac"
-        duration="3088" />
+        duration="998" />
     <task
         name="instant-run-dex"
         duration="0" />
     <task
         name="instant-run-transform"
-        duration="92" />
+        duration="129" />
     <task
         name="verifier"
-        duration="85" />
+        duration="21" />
 
     <artifact
         location="E:\AndStud_workspace\PositionAssistant\build\outputs\apk\PositionAssistant-debug.apk"
         type="MAIN" />
 
-    <build timestamp="93357720888322" >
+    <build timestamp="85719684941026" >
         <artifact
             location="E:\AndStud_workspace\PositionAssistant\build\outputs\apk\PositionAssistant-debug.apk"
             type="MAIN" />

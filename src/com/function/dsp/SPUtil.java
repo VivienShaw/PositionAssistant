@@ -1,10 +1,8 @@
 package com.function.dsp;
 
-import com.function.dsp.featureExtraction;
-
 import android.util.Log;
 
-import com.example.positionassistant.MainActivity;
+import com.function.dsp.dsp.featureExtraction;
 
 import ca.uol.aig.fftpack.Complex1D;
 import ca.uol.aig.fftpack.ComplexDoubleFFT;
@@ -68,9 +66,13 @@ public class SPUtil {
 	public static double[] fft(double[] data, boolean useWindowFunction) {
 
 		double[] fftInput = new double[data.length];
+        double[] douData = new double[data.length];
+        for(int i=0;i<data.length;i++) {
+            douData[i] = data[i];
+        }
 		if (useWindowFunction) {
 			int windowSize = data.length;
-			double[] windowedInput = applyWindowFunc(data, hanning(windowSize));
+			double[] windowedInput = applyWindowFunc(douData, hanning(windowSize));
 			System.arraycopy(windowedInput, 0, fftInput, 0,
 					windowedInput.length);
 		} else {
@@ -134,16 +136,20 @@ public class SPUtil {
 	 *         if length of data is odd. This behavior is trying to reduce the
 	 *         storage because of the symmetry of fft
 	 */
-	public static Complex1D DoubleFFT(double[] data, boolean useWindowFunction) {
+	public static Complex1D DoubleFFT(short[] data, boolean useWindowFunction) {
 
 		double[] fftInput = new double[data.length];
+        double[] douData = new double[data.length];
+        for(int i=0;i<data.length;i++) {
+            douData[i] = data[i];
+        }
 		if (useWindowFunction) {
 			int windowSize = data.length;
-			double[] windowedInput = applyWindowFunc(data, hanning(windowSize));
+			double[] windowedInput = applyWindowFunc(douData, hanning(windowSize));
 			System.arraycopy(windowedInput, 0, fftInput, 0,
 					windowedInput.length);
 		} else {
-			System.arraycopy(data, 0, fftInput, 0, data.length);
+			System.arraycopy(douData, 0, fftInput, 0, douData.length);
 		}
 		int dataLength = fftInput.length;
 		RealDoubleFFT ftEngine = new RealDoubleFFT(dataLength);

@@ -10,7 +10,7 @@ public class fftHighFilter {
 		fftHighFilter.Fs = fs;
 	}
 	
-	public void HighFilter(double[] data,int FreCutoff){
+	public void HighFilter(short[] data,int FreCutoff){
 		int df = Fs/data.length;
 		double CutNumber = Math.ceil(FreCutoff/df);
 		

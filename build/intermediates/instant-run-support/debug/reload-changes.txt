@@ -1,2 +1,4 @@
-CHANGED,E:\AndStud_workspace\PositionAssistant\build\intermediates\transforms\instantRun\debug\folders\4000\5\enhanced\com\example\positionassistant\AudioProcess$override.class
+CHANGED,E:\AndStud_workspace\PositionAssistant\build\intermediates\transforms\instantRun\debug\folders\4000\5\enhanced\com\example\positionassistant\MainActivity$override.class
+CHANGED,E:\AndStud_workspace\PositionAssistant\build\intermediates\transforms\instantRun\debug\folders\4000\5\enhanced\com\example\positionassistant\MainActivity$3$override.class
+CHANGED,E:\AndStud_workspace\PositionAssistant\build\intermediates\transforms\instantRun\debug\folders\4000\5\enhanced\com\example\positionassistant\MainActivity$2$override.class
 CHANGED,E:\AndStud_workspace\PositionAssistant\build\intermediates\transforms\instantRun\debug\folders\4000\5\enhanced\com\android\tools\fd\runtime\AppPatchesLoaderImpl.class
